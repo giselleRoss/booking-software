@@ -1,18 +1,15 @@
-'use client'
-import { useState } from 'react'
 import ReactCalendar from 'react-calendar'
 import {add, format} from 'date-fns'
+import { OPENING_HOURS_BEGINNING, OPENING_HOURS_END, OPENING_HOURS_INTERVAL } from '@/app/constants/config'
 
-const Calendar = ({}) => {
-    const [date, setDate] = useState({justDate: null, dateTime: null});
-
+const Calendar = ({date, setDate}) => {
     const getTimes = () => {
         if(!date.justDate) return;
 
         const {justDate} = date;
-        const beginning = add(justDate, {hours: 9}) ;
-        const end = add(justDate, {hours: 18});
-        const interval = 30 //in minutes
+        const beginning = add(justDate, {hours: OPENING_HOURS_BEGINNING}) ;
+        const end = add(justDate, {hours: OPENING_HOURS_END});
+        const interval = OPENING_HOURS_INTERVAL //in minutes
 
         const times = [];
 
