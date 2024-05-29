@@ -1,39 +1,58 @@
-import ReactCalendar from 'react-calendar'
-import {add, format} from 'date-fns'
-import { OPENING_HOURS_BEGINNING, OPENING_HOURS_END, OPENING_HOURS_INTERVAL } from '@/app/constants/config'
+'use client'
+import { format, formatISO, isBefore, parse } from 'date-fns'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { now, OPENING_HOURS_INTERVAL } from '../../constants/config'
 
-const Calendar = ({date, setDate}) => {
-    const getTimes = () => {
-        if(!date.justDate) return;
+const DynamicCalendar = dynamic(() => import('react-calendar'), { ssr: false })
 
-        const {justDate} = date;
-        const beginning = add(justDate, {hours: OPENING_HOURS_BEGINNING}) ;
-        const end = add(justDate, {hours: OPENING_HOURS_END});
-        const interval = OPENING_HOURS_INTERVAL //in minutes
+const Calendar = ({ days, closedDays }) => {
+    const router = useRouter()
 
-        const times = [];
-
-        for(let i = beginning; i <= end; i = add(i, {minutes: interval})){
-            times.push(i);
-        }
-        return times;
-    }
-
-    const times = getTimes();
-  return (
-    <div className='flex h-screen flex-col items-center justify-center'>
-        {date.justDate ? (
-            <div className='flex gap-4'>
-                {times?.map((time, i) => (
-                    <div key={`time-${i}`} className='rounded-sm bg-gray-100 p-2'><button type='button' onClick={() => setDate((prev) => ({...prev, dateTime: time}))}>{format(time, 'kk:mm')}</button>
-                    </div>
-                ))}
+    // Determine if today is closed
+    // const today = days
+    // const rounded = roundToNearestMinutes(now, OPENING_HOURS_INTERVAL)
+    // const closing = parse(today.closeTime, 'kk:mm', now)
+    // const tooLate = !isBefore(rounded, closing)
+    // if (tooLate) closedDays.push(formatISO(new Date().setHours(0, 0, 0, 0)))
+  
+    const [date, setDate] = useState({
+      justDate: null,
+      dateTime: null,
+    })
+  
+    useEffect(() => {
+      if (date.dateTime) {
+        localStorage.setItem('selectedTime', date.dateTime.toISOString())
+        router.push('/menu')
+      }
+    }, [date.dateTime, router])
+  
+    const times = date.justDate && getOpeningTimes(date.justDate, days)
+  
+    return (
+        <div className='flex h-screen flex-col items-center justify-center'>
+          {date.justDate ? (
+            <div className='flex max-w-lg flex-wrap gap-4'>
+              {times?.map((time, i) => (
+                <div className='rounded-sm bg-gray-100 p-2' key={`time-${i}`}>
+                  <button onClick={() => setDate((prev) => ({ ...prev, dateTime: time }))} type='button'>
+                    {format(time, 'kk:mm')}
+                  </button>
+                </div>
+              ))}
             </div>
-        ) : (<ReactCalendar minDate={new Date()}
-    className="REACT-CALENDAR p-2" view='month' onClickDay={(date) => setDate((prev) => ({...prev, justDate: date}))}/>)}
-        
-    </div>
-    
-  )
+          ) : (
+            <DynamicCalendar
+              minDate={now}
+              className='REACT-CALENDAR p-2'
+              view='month'
+            //   tileDisabled={({ date }) => closedDays.includes(formatISO(date))}
+              onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
+            />
+          )}
+        </div>
+      )
 }
 export default Calendar;
