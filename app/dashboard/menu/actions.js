@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { v4 as uuidv4 } from 'uuid';
-
     const supabase = createClient();
 
     
@@ -13,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
         const { data, error } = await supabase
             .from('services')
             .insert([
-                { some_column: 'someValue', other_column: 'otherValue' },
+                { name: formData.name, description: 'otherValue', price: 'otherValue', url: 'otherValue' },
             ])
             .select();
         // Handle response or errors here
@@ -28,4 +27,14 @@ import { v4 as uuidv4 } from 'uuid';
             return null;
         }
     }
+
+export async function getUser(){
+      
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+      console.log(user.role)
+      return user;
+      }
+      export default getUser;
     

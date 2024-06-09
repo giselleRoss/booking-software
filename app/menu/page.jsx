@@ -1,11 +1,12 @@
-import Cart from '@/app/components//Cart'
-import Menu from '@/app/components//Menu'
+'use client'
+import Cart from '@/app/components/Cart'
+import Menu from '@/app/components/Menu'
 import Spinner from '@/app/components/Spinner'
 import { parseISO } from 'date-fns'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { now } from 'src/constants/config'
-import { BsCart } from 'react-icons/bs'
+import { now } from '@/app/constants/config'
+
 
 const MenuPage = () => {
   const router = useRouter()
@@ -46,7 +47,7 @@ const MenuPage = () => {
   return (
     <>
       <Cart removeFromCart={removeFromCart} open={showCart} setOpen={setShowCart} products={productsInCart} />
-      {isFetchedAfterMount && selectedTime ? (
+      {selectedTime ? (
         <div className='mx-auto mt-12 max-w-7xl sm:px-6 lg:px-8'>
           {/* Cart Icon */}
           <div className='flex w-full justify-end'>
@@ -54,7 +55,7 @@ const MenuPage = () => {
               type='button'
               onClick={() => setShowCart((prev) => !prev)}
               className='flex items-center justify-center rounded-lg bg-gray-200 p-3 text-lg font-medium text-indigo-600'>
-              <BsCart className='mr-2 text-lg' />
+              {/* <BsCart className='mr-2 text-lg' /> */}
               {productsInCart.reduce((acc, item) => acc + item.quantity, 0)}
             </button>
           </div>

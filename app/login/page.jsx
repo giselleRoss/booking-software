@@ -1,4 +1,5 @@
-import { login, signup } from './actions'
+import GoogleButton from '../components/UI/GoogleButton'
+import { handleSignInWithGoogle, login, signup } from './actions'
 
 export default function LoginPage({searchParams}) {
   return (
@@ -20,8 +21,10 @@ export default function LoginPage({searchParams}) {
         </p>
       )}
    </div>
+   <div>
+    <button formAction={handleSignInWithGoogle}>Sign in with Google</button>
+   </div>
     </form>
-    
     </>
     
   )
